@@ -159,16 +159,20 @@ export default function DashboardPage() {
               value={stats.balance}
               isCurrency
             />
-            <StatCard
-              title="Receita Total (Filtrada)"
-              value={stats.totalIncome}
-              isCurrency
-            />
-            <StatCard
-              title="Despesa Total (Filtrada)"
-              value={stats.totalExpense}
-              isCurrency
-            />
+            {(filterType === "all" || filterType === "income") && (
+              <StatCard
+                title="Receita Total (Filtrada)"
+                value={stats.totalIncome}
+                isCurrency
+              />
+            )}
+            {(filterType === "all" || filterType === "expense") && (
+              <StatCard
+                title="Despesa Total (Filtrada)"
+                value={stats.totalExpense}
+                isCurrency
+              />
+            )}
             <StatCard
               title="Nº de Transações (Filtradas)"
               value={stats.count}

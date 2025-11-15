@@ -54,10 +54,10 @@ export default function Sidebar() {
           <div className="user-info">
             <span className="user-name">{user?.displayName}</span>
             <span className="user-email">{user?.email}</span>
+            <button onClick={logout} className="logout-icon" title="Sair">
+              Sair
+            </button>
           </div>
-          <button onClick={logout} className="logout-icon" title="Sair">
-            ...
-          </button>
         </div>
       </div>
     </aside>
