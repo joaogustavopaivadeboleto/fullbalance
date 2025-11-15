@@ -51,7 +51,6 @@ export default function Sidebar() {
       </nav>
       <div className="sidebar-footer">
         <div className="user-profile">
-          <div className="user-avatar">{user?.displayName?.charAt(0)}</div>
           <div className="user-info">
             <span className="user-name">{user?.displayName}</span>
             <span className="user-email">{user?.email}</span>

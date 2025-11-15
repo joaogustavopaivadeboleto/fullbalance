@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "FullBalance",
   description: "Seu sistema financeiro pessoal",
+  icons: {
+    icon: "/bulbo-de-banco-de-porcos.ico",
+  },
 };
 
 export default function RootLayout({
