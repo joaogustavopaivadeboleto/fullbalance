@@ -1,14 +1,17 @@
 // src/components/Transactions/AddTransactionForm.tsx
 "use client";
 
-import React, { useState, useEffect } from "react"; // Importe useEffect
-import { useTransactions, Transaction } from "@/hooks/useTransactions"; // Importe a tipagem Transaction
-import { Timestamp } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { useTransactions, Transaction } from "@/hooks/useTransactions";
 import { useAccounts } from "@/hooks/useAccounts";
+import { Timestamp } from "firebase/firestore";
+import FormField from "../forms/FormField";
+// --- INÍCIO DA MUDANÇA 1 ---
+import CustomDatePicker from "../ui/datepicker/CustomDatePicker"; // Importe o novo componente
+// --- FIM DA MUDANÇA 1 ---
 
-// 1. Adicione a nova propriedade opcional
 interface AddTransactionFormProps {
-  onFormSubmit?: () => void;
+  onFormSubmit: () => void;
   transactionToEdit?: Transaction | null;
 }
 
@@ -16,119 +19,174 @@ export default function AddTransactionForm({
   onFormSubmit,
   transactionToEdit,
 }: AddTransactionFormProps) {
-  // 2. Adicione a função 'updateTransaction' do hook
   const { addTransaction, updateTransaction } = useTransactions();
-  const { accounts, loading: accountsLoading } = useAccounts();
+  const { accounts } = useAccounts();
 
   const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
+  // --- INÍCIO DA MUDANÇA 2 ---
+  // O estado 'date' agora armazena um objeto Date, não uma string
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  // --- FIM DA MUDANÇA 2 ---
   const [type, setType] = useState<"income" | "expense">("expense");
-  const [accountId, setAccountId] = useState("");
   const [category, setCategory] = useState("");
+  const [accountId, setAccountId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 3. Efeito para preencher o formulário no modo de edição
   useEffect(() => {
     if (transactionToEdit) {
       setTitle(transactionToEdit.title);
-      setAmount(String(transactionToEdit.amount));
+      setAmount(transactionToEdit.amount);
+      // --- INÍCIO DA MUDANÇA 3 ---
+      // Converte o Timestamp do Firebase para um objeto Date
+      setDate(new Date(transactionToEdit.date.toDate()));
+      // --- FIM DA MUDANÇA 3 ---
       setType(transactionToEdit.type);
-      setAccountId(transactionToEdit.accountId);
       setCategory(transactionToEdit.category);
+      setAccountId(transactionToEdit.accountId);
     } else {
-      // Limpa o formulário se não houver transação para editar (ex: ao fechar o modal)
+      // Reseta os campos para o estado inicial
       setTitle("");
-      setAmount("");
+      setAmount(0);
+      setDate(new Date()); // A data inicial é a data de hoje
       setType("expense");
-      setAccountId("");
       setCategory("");
+      setAccountId(accounts.length > 0 ? accounts[0].id : "");
     }
-  }, [transactionToEdit]);
+  }, [transactionToEdit, accounts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !amount || !accountId) {
-      alert("Por favor, preencha todos os campos, incluindo a conta.");
+    // --- INÍCIO DA MUDANÇA 4 ---
+    // Verifica se a conta E a data foram selecionadas
+    if (!accountId || !date) {
+      alert("Por favor, selecione uma conta e uma data.");
       return;
     }
+    // --- FIM DA MUDANÇA 4 ---
+    setIsSubmitting(true);
 
     const transactionData = {
       title,
-      amount: parseFloat(amount),
+      amount: Number(amount),
+      // --- INÍCIO DA MUDANÇA 5 ---
+      // Converte o objeto Date do estado para um Timestamp do Firebase
+      date: Timestamp.fromDate(date),
+      // --- FIM DA MUDANÇA 5 ---
       type,
       category,
       accountId,
-      date: transactionToEdit ? transactionToEdit.date : Timestamp.now(), // Mantém a data original na edição
     };
 
     try {
       if (transactionToEdit) {
-        // 4. Se estiver editando, chama a função de atualização
         await updateTransaction(transactionToEdit.id, transactionData);
       } else {
-        // Se não, chama a função de adição
         await addTransaction(transactionData);
       }
-
-      if (onFormSubmit) {
-        onFormSubmit();
-      }
+      onFormSubmit();
     } catch (error) {
-      alert("Ocorreu um erro.");
+      console.error("Erro ao salvar transação:", error);
+      alert("Ocorreu um erro ao salvar. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="transaction-form">
-      {/* O título do formulário agora é dinâmico */}
-      <h3>
-        {transactionToEdit ? "Editar Transação" : "Adicionar Nova Transação"}
-      </h3>
-      {/* ... O resto do JSX do formulário continua exatamente o mesmo ... */}
-      <input
-        type="text"
-        placeholder="Título"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      <input
-        type="number"
-        placeholder="Valor"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        required
-      />
-      <select
-        value={type}
-        onChange={(e) => setType(e.target.value as "income" | "expense")}
-      >
-        <option value="expense">Despesa</option>
-        <option value="income">Receita</option>
-      </select>
-      <select
-        value={accountId}
-        onChange={(e) => setAccountId(e.target.value)}
-        required
-        disabled={accountsLoading}
-      >
-        <option value="" disabled>
-          {accountsLoading ? "Carregando..." : "Selecione uma conta"}
-        </option>
-        {accounts.map((account) => (
-          <option key={account.id} value={account.id}>
-            {account.name}
+    <form onSubmit={handleSubmit} className="form-layout">
+      {/* Título (sem alteração) */}
+      <div className="full-width">
+        <FormField label="Título da Transação" htmlFor="title">
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ex: Salário, Aluguel, Supermercado"
+            required
+          />
+        </FormField>
+      </div>
+
+      {/* Valor, Tipo, Conta, Categoria (sem alteração) */}
+      <FormField label="Valor" htmlFor="amount">
+        <input
+          id="amount"
+          type="number"
+          step="0.01"
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          required
+        />
+      </FormField>
+      <FormField label="Tipo" htmlFor="type">
+        <select
+          id="type"
+          value={type}
+          onChange={(e) => setType(e.target.value as "income" | "expense")}
+        >
+          <option value="expense">Despesa</option>
+          <option value="income">Receita</option>
+        </select>
+      </FormField>
+      <FormField label="Conta" htmlFor="accountId">
+        <select
+          id="accountId"
+          value={accountId}
+          onChange={(e) => setAccountId(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            Selecione uma conta
           </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        placeholder="Categoria"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      />
-      <button type="submit" className="primary-button">
-        {transactionToEdit ? "Salvar Alterações" : "Adicionar"}
-      </button>
+          {accounts.map((acc) => (
+            <option key={acc.id} value={acc.id}>
+              {acc.name}
+            </option>
+          ))}
+        </select>
+      </FormField>
+      <FormField label="Categoria" htmlFor="category">
+        <input
+          id="category"
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          placeholder="Ex: Moradia, Transporte"
+        />
+      </FormField>
+
+      {/* --- INÍCIO DA MUDANÇA 6 --- */}
+      {/* Substituição do input de data pelo componente customizado */}
+      <div className="datepicker-wrapper">
+        <label htmlFor="date-picker-trigger">Data da Transação</label>{" "}
+        {/* Adicionamos um label manual */}
+        <CustomDatePicker date={date} setDate={setDate} />
+      </div>
+      {/* --- FIM DA MUDANÇA 6 --- */}
+
+      {/* Botões de ação (sem alteração) */}
+      <div className="form-actions full-width">
+        <button
+          type="button"
+          onClick={onFormSubmit}
+          className="secondary-button"
+        >
+          Voltar
+        </button>
+        <button
+          type="submit"
+          className="primary-button"
+          disabled={isSubmitting}
+        >
+          {isSubmitting
+            ? "Salvando..."
+            : transactionToEdit
+            ? "Salvar Alterações"
+            : "Adicionar"}
+        </button>
+      </div>
     </form>
   );
 }

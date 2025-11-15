@@ -1,9 +1,9 @@
-/* src/app/globals.css */
+/* src/app/globals.css - VERSÃO FINAL COMPLETA E AJUSTADA */
 
 @import url('../styles/variables.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap' ); /* Importa a fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap' );
 
-/* Reset Básico */
+/* 1. Reset Básico e Padrões Globais */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -14,8 +14,8 @@ html,
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  color: var(--color-text-primary); /* Cor de texto principal */
-  background-color: var(--color-background); /* Fundo escuro */
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
   min-height: 100vh;
 }
 
@@ -28,82 +28,15 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Títulos */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-md);
   font-weight: 500;
 }
 
-/* Estilos para as Páginas de Autenticação (Login/Cadastro) */
-.auth-container {
-  max-width: 400px;
-  margin: 100px auto;
-  padding: var(--spacing-xl);
-  background-color: var(--color-surface); /* Cor de superfície escura */
-  border-radius: var(--border-radius-sm);
-  border: 1px solid var(--color-border);
-  text-align: center; /* Centraliza o conteúdo do formulário */
-}
-
-.auth-container h2 {
-  font-size: 1.8em;
-  margin-bottom: var(--spacing-sm);
-}
-
-.auth-container p {
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-lg);
-}
-
-.auth-form {
-  text-align: left; /* Alinha os labels à esquerda */
-}
-
-.auth-form label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-size: 0.9em;
-  color: var(--color-text-secondary);
-}
-
-.auth-form input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  background-color: var(--color-background); /* Fundo do input */
-  color: var(--color-text-primary);
-  font-size: 1em;
-}
-
-.auth-form input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
-.primary-button {
-  background-color: var(--color-primary);
-  color: var(--color-background); /* Texto escuro no botão verde */
-  border: none;
-  padding: 12px;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 1em;
-  font-weight: 700;
-  width: 100%;
-}
-
-.primary-button:hover {
-  background-color: var(--color-primary-darker);
-}
-
-.auth-container .link-text {
-  margin-top: var(--spacing-lg);
-  color: var(--color-text-secondary);
-}
+/* 2. Layout Principal e Sidebar */
 .main-layout {
   display: flex;
   min-height: 100vh;
@@ -119,12 +52,12 @@ h1, h2, h3 {
 }
 
 .main-content {
-  flex: 1; /* Ocupa todo o espaço restante */
+  flex: 1;
   padding: var(--spacing-xl);
-  overflow-y: auto; /* Permite scroll se o conteúdo for grande */
+  overflow-y: auto;
 }
 
-/* Estilos da Sidebar */
+/* 3. Estilos da Sidebar */
 .sidebar-header .logo {
   font-size: 1.5em;
   font-weight: bold;
@@ -158,7 +91,7 @@ h1, h2, h3 {
 
 .sidebar-nav a.active {
   background-color: var(--color-primary);
-  color: var(--color-background); /* Texto escuro no fundo verde */
+  color: var(--color-background);
   font-weight: bold;
 }
 
@@ -167,7 +100,7 @@ h1, h2, h3 {
 }
 
 .sidebar-footer {
-  margin-top: auto; /* Empurra o rodapé para o final */
+  margin-top: auto;
 }
 
 .user-profile {
@@ -211,6 +144,59 @@ h1, h2, h3 {
   color: var(--color-text-secondary);
   cursor: pointer;
 }
+
+/* 4. Componentes de UI Genéricos (Botões, etc.) */
+.primary-button {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  padding: 12px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1em;
+  font-weight: 700;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.primary-button:hover {
+  background-color: var(--color-primary-darker);
+}
+
+.secondary-button,
+.danger-button {
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.secondary-button {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.danger-button {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.delete-button {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+}
+
+/* 5. Estilos de Páginas e Seções */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -219,13 +205,14 @@ h1, h2, h3 {
 }
 
 .page-header .primary-button {
-  width: auto; /* Ajusta o botão para não ocupar 100% */
+  width: auto;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .stat-card {
@@ -234,12 +221,80 @@ h1, h2, h3 {
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--color-border);
 }
-/* 9. Estilos para a Página de Configurações */
+
 .settings-section {
   background-color: var(--color-surface);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--color-border);
+}
+
+.fullscreen-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--color-background);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
+}
+
+/* 6. Estilos de Formulários */
+.auth-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: var(--spacing-xl);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.auth-container h2 {
+  font-size: 1.8em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.auth-container p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.auth-form {
+  text-align: left;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.9em;
+  color: var(--color-text-secondary);
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 1em;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.auth-container .link-text {
+  margin-top: var(--spacing-lg);
+  color: var(--color-text-secondary);
 }
 
 .inline-form {
@@ -249,7 +304,7 @@ h1, h2, h3 {
 }
 
 .inline-form input[type="text"] {
-  flex: 1; /* Ocupa o máximo de espaço */
+  flex: 1;
 }
 
 .inline-form input[type="color"] {
@@ -264,6 +319,65 @@ h1, h2, h3 {
   width: auto;
 }
 
+.form-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.form-layout .full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-field label,
+.datepicker-wrapper label {
+  font-weight: 500;
+  font-size: 0.9em;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-lg);
+}
+
+.form-actions .primary-button,
+.form-actions .secondary-button {
+  width: auto;
+}
+
+/* 7. Estilos de Listas e Tabelas */
 .accounts-list {
   list-style: none;
 }
@@ -287,55 +401,179 @@ h1, h2, h3 {
   display: inline-block;
 }
 
-.delete-button {
-  margin-left: auto; /* Empurra o botão para a direita */
-  background: none;
-  border: 1px solid var(--color-danger);
-  color: var(--color-danger);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
+.table-container {
+  width: 100%;
+  overflow-x: auto;
 }
-.transaction-item {
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.data-table thead {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  font-size: 0.85em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--color-border);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table .transaction-amount {
+  font-weight: 500;
+}
+
+.data-table .transaction-actions {
+  text-align: left;
+}
+
+.data-table .transaction-actions .edit {
+  background: none;
+  border: none;
+  color: var(--color-primary-darker);
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.data-table .transaction-actions .trash {
+  background: none;
+  border: none;
+  color: var(--color-danger-darker);
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.data-table .transaction-actions button:hover {
+  color: var(--color-primary);
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: var(--spacing-sm);
+}
+
+/* 8. Barra de Filtros */
+.filter-bar {
+  display: flex; /* MUDANÇA: De 'grid' para 'flex' */
+  justify-content: center; /* MUDANÇA: Centraliza os itens horizontalmente */
+  flex-wrap: wrap; /* Permite que os filtros quebrem linha em telas menores */
+  gap: var(--spacing-md);
+  align-items: center;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-md);
+}
+
+.filter-bar .search-input-field,
+.filter-bar .filter-select {
+  width: 200px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 0.9em;
+}
+.filter-bar .search-input-field {
+  width: 250px;
+}
+.filter-bar .search-input-field:focus,
+.filter-bar .filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.clear-filters-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 8px 0;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.clear-filters-button:hover {
+  color: var(--color-primary);
+}
+
+/* 9. Estilos para o Componente Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
-  gap: var(--spacing-md); /* Adiciona um espaçamento entre os itens */
-  background-color: var(--color-surface);
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  margin-bottom: var(--spacing-sm);
-  /* Remove o box-shadow se preferir um visual mais limpo como na página de configurações */
+  justify-content: center;
+  z-index: 1000;
 }
 
-/* Adicione estas novas regras */
-.transaction-details {
-  display: flex;
-  flex-direction: column;
-  flex: 1; /* Faz esta div ocupar o espaço disponível */
-}
-
-.transaction-details small {
-  color: var(--color-text-secondary);
-  font-size: 0.85em;
-}
-
-.transaction-amount {
-  font-weight: 500;
-  font-size: 1.1em;
-}
-.transaction-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  margin-left: auto; /* Empurra os botões para a direita */
-}
-
-.transaction-actions button {
-  background: none;
+.modal-content {
+  background-color: var(--color-background);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.modal-header h2 {
+  margin-bottom: 0;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
   color: var(--color-text-secondary);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  font-size: 1.5em;
   cursor: pointer;
 }
 
@@ -346,34 +584,108 @@ h1, h2, h3 {
   margin-top: var(--spacing-lg);
 }
 
-.secondary-button, .danger-button {
-  border: none;
-  padding: 10px 16px;
+/* 10. Estilos para o Custom Date Picker (react-day-picker) */
+.datepicker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.datepicker-trigger {
+  gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 1em;
+  font-family: inherit;
+  text-align: left;
   cursor: pointer;
+}
+
+.datepicker-trigger:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.datepicker-icon {
+  color: var(--color-primary);
+}
+
+.datepicker-popover {
+  position: absolute;
+  z-index: 1010;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm);
+  box-shadow: var(--box-shadow);
+}
+
+.datepicker-popover.bottom {
+  top: calc(100% + 8px);
+  left: 0;
+}
+
+.datepicker-popover.top {
+  bottom: calc(100% + 8px);
+  left: 0;
+}
+
+.filter-datepicker .datepicker-popover {
+  left: auto;
+  right: 0;
+}
+
+/* Estilos internos do react-day-picker (rdp) */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: var(--color-primary) !important;
+  margin: 0;
+}
+
+.rdp-caption_label {
+  color: var(--color-text-primary) !important;
   font-weight: 500;
 }
 
-.secondary-button {
-  background-color: var(--color-border);
-  color: var(--color-text-primary);
-}
-
-.danger-button {
-  background-color: var(--color-danger);
-  color: var(--color-white);
-}
-/* Em src/app/globals.css, pode adicionar junto aos estilos do .page-header */
-
-.account-filter {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  padding: 8px 12px;
+.rdp-head_cell {
+  color: var(--color-text-secondary) !important;
   font-size: 0.9em;
 }
-/* Em src/app/globals.css */
+
+.rdp-day {
+  color: var(--color-text-secondary) !important;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: var(--color-border) !important;
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+  color: var(--color-primary) !important;
+  font-weight: bold;
+  background-color: transparent !important;
+}
+
+.rdp-day_selected,
+.rdp-day_selected:hover {
+  background-color: var(--rdp-accent-color) !important;
+  color: var(--color-background) !important;
+  font-weight: bold;
+}
+
+.rdp-chevron {
+  fill: var(--color-primary) !important;
+}
+.rdp-selected .rdp-day_button{
+  border: none !important;
+  color:var(--color-primary) !important ;
+}
 .fullscreen-loader {
   display: flex;
   align-items: center;
@@ -381,5 +693,124 @@ h1, h2, h3 {
   height: 100vh;
   width: 100vw;
   background-color: var(--color-background);
+  color: var(--color-primary); /* Adiciona uma cor ao texto */
+  font-size: 1.2em; /* Aumenta um pouco o texto */
+}
+.stat-card h3 {
+  font-size: 1em;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
 }
 
+.stat-card p {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Estilos para a lista de Últimas Transações */
+.latest-transactions {
+  margin-top: var(--spacing-xl);
+}
+
+.latest-transactions ul {
+  list-style: none;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-sm);
+}
+
+.latest-transactions li {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.latest-transactions li:last-child {
+  border-bottom: none;
+}
+.account-balances-section {
+  margin-top: var(--spacing-xl);
+}
+
+/* Estilos para o Card de Saldo de Conta */
+.account-balance-card .account-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.account-balance-card h3 {
+  font-size: 1em;
+  color: var(--color-text-secondary);
+  margin-bottom: 0; /* Remove a margem padrão do h3 */
+}
+
+.account-balance-card p {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.inline-form {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  align-items: center; /* Alinha os itens verticalmente */
+}
+
+/* Estilo para o input de texto no formulário em linha */
+.inline-form .form-input-field {
+  flex: 1; /* Faz o campo de nome ocupar o espaço disponível */
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 1em;
+}
+
+.inline-form .form-input-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Estilo para o input de cor */
+.inline-form .color-input-field {
+  -webkit-appearance: none; /* Remove a aparência padrão no Chrome/Safari */
+  -moz-appearance: none; /* Remove a aparência padrão no Firefox */
+  appearance: none;
+  width: 44px; /* Tamanho um pouco maior para ser um bom alvo de clique */
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Estilo para a "bolinha" de cor dentro do input de cor (para Chrome/Safari) */
+.inline-form .color-input-field::-webkit-color-swatch {
+  border-radius: var(--border-radius-sm);
+  border: none;
+}
+
+/* Estilo para a "bolinha" de cor dentro do input de cor (para Firefox) */
+.inline-form .color-input-field::-moz-color-swatch {
+  border-radius: var(--border-radius-sm);
+  border: none;
+}
+
+
+/* Ajuste para o botão no formulário em linha */
+.inline-form .primary-button {
+  width: auto; /* Permite que o botão tenha o tamanho do seu conteúdo */
+}
+
+/* Garante que a coluna de ações na tabela tenha largura automática */
+.data-table td.transaction-actions {
+  width: 1%;
+  white-space: nowrap;
+}

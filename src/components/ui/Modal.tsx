@@ -1,7 +1,8 @@
 // src/components/ui/Modal.tsx
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { FiX } from "react-icons/fi"; // Ícone para o botão de fechar
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,12 +17,8 @@ export default function Modal({
   title,
   children,
 }: ModalProps) {
-  if (!isOpen) {
-    return null;
-  }
-
-  // Permite fechar o modal com a tecla 'Escape'
-  React.useEffect(() => {
+  // Efeito para fechar o modal com a tecla "Esc"
+  useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -29,21 +26,32 @@ export default function Modal({
     };
     window.addEventListener("keydown", handleEsc);
 
+    // Limpa o listener quando o componente é desmontado
     return () => {
       window.removeEventListener("keydown", handleEsc);
     };
   }, [onClose]);
 
+  // Se o modal não estiver aberto, não renderiza nada.
+  if (!isOpen) {
+    return null;
+  }
+
+  // Se estiver aberto, renderiza a estrutura completa do modal.
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{title}</h2>
-          <button onClick={onClose} className="close-button">
-            &times;
+          <button
+            onClick={onClose}
+            className="modal-close-button"
+            title="Fechar"
+          >
+            <FiX />
           </button>
         </div>
-        <div className="modal-body">{children}</div>
+        {children}
       </div>
     </div>
   );

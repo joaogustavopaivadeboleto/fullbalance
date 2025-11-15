@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
-
+import FullscreenLoader from "@/components/ui/FullscreenLoader";
 export default function MainLayout({
   children,
 }: {
@@ -27,7 +27,9 @@ export default function MainLayout({
       </div>
     );
   }
-
+  if (loading) {
+    return <FullscreenLoader />;
+  }
   return (
     <div className="main-layout">
       <Sidebar />

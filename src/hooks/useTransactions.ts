@@ -1,4 +1,4 @@
-// src/hooks/useTransactions.ts
+// src/hooks/useTransactions.ts - VERSÃO FINAL COMPLETA
 
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -16,7 +16,7 @@ import {
 import { db } from '@/firebase/firebaseConfig';
 import { useAuth } from '@/context/AuthContext';
 
-// 1. Tipagem para uma única Transação
+// A interface Transaction não muda
 export interface Transaction {
   id: string;
   userId: string;
@@ -28,16 +28,18 @@ export interface Transaction {
   accountId: string;
 }
 
-export const useTransactions = (filter?: { accountId?: string }) => {
+// Define a estrutura do objeto de filtro que o hook pode receber
+interface TransactionsFilter {
+  accountId?: string;
+  type?: 'income' | 'expense';
+}
+
+// O hook agora aceita um filtro com accountId e/ou type
+export const useTransactions = (filter?: TransactionsFilter) => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // --- INÍCIO DA CORREÇÃO ---
-  // Extrai o valor primitivo (string) do objeto de filtro.
-  // Isso evita que o useEffect entre em loop infinito.
-  const accountId = filter?.accountId;
 
   useEffect(() => {
     if (!user) {
@@ -49,18 +51,26 @@ export const useTransactions = (filter?: { accountId?: string }) => {
     setLoading(true);
     const transactionsRef = collection(db, 'transactions');
     
-    let queryConstraints = [
+    // Inicia a construção da query com as restrições padrão
+    let queryConstraints: any[] = [
       where('userId', '==', user.uid),
       orderBy('date', 'desc')
     ];
 
-    // Adiciona o filtro de conta SE um accountId for fornecido
-    if (accountId) {
-      queryConstraints.push(where('accountId', '==', accountId));
+    // Adiciona o filtro de conta SE ele for fornecido
+    if (filter?.accountId) {
+      queryConstraints.push(where('accountId', '==', filter.accountId));
     }
 
+    // Adiciona o filtro de tipo SE ele for fornecido
+    if (filter?.type) {
+      queryConstraints.push(where('type', '==', filter.type));
+    }
+
+    // Monta a query final com todas as restrições
     const q = query(transactionsRef, ...queryConstraints);
 
+    // Ouve as mudanças em tempo real
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedTransactions = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -70,14 +80,15 @@ export const useTransactions = (filter?: { accountId?: string }) => {
       setLoading(false);
     }, (err) => {
       console.error("Erro ao buscar transações:", err);
-      setError("Falha ao carregar as transações.");
+      setError("Falha ao carregar as transações. Verifique o console para um link de criação de índice do Firestore.");
       setLoading(false);
     });
 
+    // Limpa o listener ao desmontar o componente
     return () => unsubscribe();
-  // A dependência agora é a string 'accountId', que é estável entre renderizações.
-  }, [user, accountId]); 
-  // --- FIM DA CORREÇÃO ---
+  // Usamos JSON.stringify para criar uma dependência estável a partir do objeto de filtro.
+  // O efeito só será re-executado se os valores do filtro realmente mudarem.
+  }, [user, JSON.stringify(filter)]); 
 
   // CREATE: Lógica para adicionar uma nova transação
   const addTransaction = useCallback(
@@ -135,7 +146,7 @@ export const useTransactions = (filter?: { accountId?: string }) => {
     [user]
   );
 
-  // Retorna tudo que os componentes precisarão
+  // Retorna os dados e as funções para serem usados nos componentes
   return {
     transactions,
     loading,

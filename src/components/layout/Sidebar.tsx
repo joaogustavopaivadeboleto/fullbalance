@@ -5,7 +5,13 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-
+import {
+  FiGrid,
+  FiRepeat,
+  FiBarChart2,
+  FiSettings,
+  FiLogOut,
+} from "react-icons/fi";
 // Ícones são placeholders por enquanto
 // import { RxDashboard, RxBarChart, RxGear } from 'react-icons/rx';
 
@@ -15,10 +21,10 @@ export default function Sidebar() {
 
   // 1. Links de navegação atualizados para um app financeiro
   const navLinks = [
-    { name: "Dashboard", href: "/dashboard", icon: "D" },
-    { name: "Transações", href: "/transactions", icon: "T" },
-    { name: "Relatórios", href: "/reports", icon: "R" },
-    { name: "Configurações", href: "/settings", icon: "C" },
+    { href: "/dashboard", label: "Dashboard", icon: <FiGrid /> },
+    { href: "/transactions", label: "Transações", icon: <FiRepeat /> },
+    { href: "/reports", label: "Relatórios", icon: <FiBarChart2 /> },
+    { href: "/settings", label: "Configurações", icon: <FiSettings /> },
   ];
 
   return (
@@ -29,17 +35,18 @@ export default function Sidebar() {
       </div>
       <nav className="sidebar-nav">
         <ul>
-          {navLinks.map((link) => {
-            const isActive = pathname.startsWith(link.href);
-            return (
-              <li key={link.name}>
-                <Link href={link.href} className={isActive ? "active" : ""}>
-                  <span className="icon">{link.icon}</span>
-                  {link.name}
-                </Link>
-              </li>
-            );
-          })}
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={pathname === link.href ? "active" : ""}
+              >
+                {/* 2. Adicione o ícone antes do texto */}
+                <span className="icon">{link.icon}</span>
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
       <div className="sidebar-footer">
