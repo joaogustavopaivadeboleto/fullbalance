@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext"; // 1. Importe o AuthProvider
 import { ThemeProvider } from "@/context/ThemeContext";
+import { MobileMenuProvider } from "@/context/MobileMenuContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* 2. Envolva TODOS os children com o AuthProvider */}
         <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <MobileMenuProvider>{children}</MobileMenuProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

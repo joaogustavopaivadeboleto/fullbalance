@@ -1,65 +1,82 @@
 // src/components/layout/Sidebar.tsx
 "use client";
 
-import React from "react";
+import React from "react"; // Removido useState, useEffect, useRef
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import {
   FiGrid,
   FiRepeat,
   FiBarChart2,
   FiSettings,
-  FiLogOut,
+  FiLogOut, // Ícone de Sair
 } from "react-icons/fi";
-// Ícones são placeholders por enquanto
-// import { RxDashboard, RxBarChart, RxGear } from 'react-icons/rx';
+
+// Array com os itens de navegação
+const navItems = [
+  { href: "/dashboard", label: "Dashboard", icon: FiGrid },
+  { href: "/transactions", label: "Transações", icon: FiRepeat },
+  { href: "/reports", label: "Relatórios", icon: FiBarChart2 },
+  { href: "/settings", label: "Configurações", icon: FiSettings },
+];
 
 export default function Sidebar() {
-  const { user, logout } = useAuth();
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+  const { isMenuOpen, closeMenu } = useMobileMenu(); // Hook para o menu mobile
 
-  // 1. Links de navegação atualizados para um app financeiro
-  const navLinks = [
-    { href: "/dashboard", label: "Dashboard", icon: <FiGrid /> },
-    { href: "/transactions", label: "Transações", icon: <FiRepeat /> },
-    { href: "/reports", label: "Relatórios", icon: <FiBarChart2 /> },
-    { href: "/settings", label: "Configurações", icon: <FiSettings /> },
-  ];
+  // Função para fechar o menu mobile ao navegar
+  const handleLinkClick = () => {
+    closeMenu();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
 
   return (
-    <aside className="sidebar">
+    // Adiciona a classe 'open' condicionalmente para o menu mobile
+    <aside className={`sidebar ${isMenuOpen ? "open" : ""}`}>
       <div className="sidebar-header">
-        {/* 2. Logo atualizado */}
-        <div className="logo">FullBalance</div>
+        <h1 className="logo">FullBalance</h1>
       </div>
       <nav className="sidebar-nav">
-        <ul>
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={pathname === link.href ? "active" : ""}
-              >
-                {/* 2. Adicione o ícone antes do texto */}
-                <span className="icon">{link.icon}</span>
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`nav-item ${pathname === item.href ? "active" : ""}`}
+            onClick={handleLinkClick}
+          >
+            <item.icon />
+            <span>{item.label}</span>
+          </Link>
+        ))}
       </nav>
-      <div className="sidebar-footer">
-        <div className="user-profile">
-          <div className="user-info">
-            <span className="user-name">{user?.displayName}</span>
-            <span className="user-email">{user?.email}</span>
-            <button onClick={logout} className="logout-icon" title="Sair">
-              Sair
-            </button>
+
+      {/* --- INÍCIO DA PARTE AJUSTADA --- */}
+      {user && (
+        <div className="sidebar-footer">
+          <div className="user-profile">
+            <div className="user-info">
+              <span className="user-name">{user.displayName || "Usuário"}</span>
+              <span className="user-email">{user.email}</span>
+            </div>
           </div>
+          {/* Botão de Sair separado e estilizado */}
+          <button onClick={handleLogout} className="logout-button">
+            <FiLogOut />
+            <span>Sair</span>
+          </button>
         </div>
-      </div>
+      )}
+      {/* --- FIM DA PARTE AJUSTADA --- */}
     </aside>
   );
 }

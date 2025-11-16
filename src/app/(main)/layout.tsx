@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import FullscreenLoader from "@/components/ui/FullscreenLoader";
+import MobileHeader from "@/components/layout/MobileHeader";
 export default function MainLayout({
   children,
 }: {
@@ -33,7 +34,10 @@ export default function MainLayout({
   return (
     <div className="main-layout">
       <Sidebar />
-      <main className="main-content">{children}</main>
+      <div className="content-wrapper">
+        <MobileHeader />
+        <main className="main-content">{children}</main>
+      </div>
     </div>
   );
 }

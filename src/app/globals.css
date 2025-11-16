@@ -38,23 +38,27 @@ h3 {
 
 /* 2. Layout Principal e Sidebar */
 .main-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Coluna da sidebar + Coluna do conteúdo */
   min-height: 100vh;
 }
-
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Permite que apenas o conteúdo role, não o layout inteiro */
+}
 .sidebar {
-  width: 250px;
   background-color: var(--color-surface);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   padding: var(--spacing-lg);
+  /* A largura é controlada pelo .main-layout */
 }
 
 .main-content {
   flex: 1;
   padding: var(--spacing-xl);
-  overflow-y: auto;
 }
 
 /* 3. Estilos da Sidebar */
@@ -108,7 +112,6 @@ h3 {
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm);
-  border-top: 1px solid var(--color-border);
 }
 
 .user-avatar {
@@ -508,6 +511,10 @@ h3 {
 .filter-bar .search-input-field {
   width: 250px;
 }
+.user-menu-dropdown{
+  text-align:center;
+    color: var(--color-primary);
+  }
 .filter-bar .search-input-field:focus,
 .filter-bar .filter-select:focus {
   outline: none;
@@ -852,4 +859,172 @@ h3 {
 
 .report-actions .primary-button {
   width: auto;
+}
+@media (max-width: 768px) {
+  
+  /* --- Layout Principal --- */
+  .main-layout {
+    grid-template-columns: 1fr; /* Muda para uma única coluna */
+  }
+
+  .content-wrapper {
+    padding-left: 0; /* Remove o espaçamento da sidebar */
+  }
+
+  .main-content {
+    padding: var(--spacing-md); /* Reduz o padding interno */
+  }
+
+  /* --- Sidebar (Menu Mobile) --- */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transform: translateX(-100%); /* Esconde a sidebar fora da tela */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Garante que a sidebar fique sobre o conteúdo */
+    width: 280px; /* Define uma largura fixa para o menu aberto */
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* Mostra a sidebar quando a classe 'open' é aplicada */
+    box-shadow: 4px 0px 15px rgba(0,0,0,0.2);
+  }
+
+  /* --- Cabeçalho Mobile --- */
+  .mobile-header {
+    display: flex; /* Mostra o cabeçalho mobile */
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+  }
+
+  .mobile-header .logo {
+    font-size: 1.5rem;
+  }
+
+  .mobile-menu-button {
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  /* --- Ajustes Gerais de Conteúdo --- */
+  .page-header h1 {
+    font-size: 1.8rem; /* Reduz o tamanho do título da página */
+  }
+
+  .stats-grid {
+    /* Empilha os cards verticalmente */
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .filter-bar {
+    flex-direction: column; /* Empilha os filtros */
+    gap: var(--spacing-md);
+  }
+
+  .filter-bar .clear-filters-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr; /* Empilha os campos do formulário */
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+
+  .report-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .report-actions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+
+  .report-actions .primary-button {
+    width: 100%;
+  }
+}
+
+/* Esconde o cabeçalho mobile em telas grandes */
+@media (min-width: 769px) {
+  .mobile-header {
+    display: none;
+  }
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza o conteúdo */
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 100%;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  font-size: 0.8em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Novo botão de Logout */
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-danger-variant); /* Borda sutil */
+  background-color: transparent;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--color-danger-variant);
+  color: var(--color-white);
+  border-color: var(--color-danger);
 }
