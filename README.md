@@ -1,8 +1,4 @@
 # FullBalance - Seu Sistema Financeiro Pessoal
-
-![FullBalance Dashboard](https://i.imgur.com/your-image-url.png ) 
-*(Dica: Tire um print da sua tela de Dashboard, suba no [Imgur](https://imgur.com/upload ) e cole o link aqui para ter uma imagem de capa bonita)*
-
 ---
 
 ## 📋 Sobre o Projeto
