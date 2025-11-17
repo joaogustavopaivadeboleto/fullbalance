@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "FullBalance",
   description: "Seu sistema financeiro pessoal",
   icons: {
-    icon: "/bulbo-de-banco-de-porcos.ico",
+    icon: "/icon.ico",
   },
 };
 
