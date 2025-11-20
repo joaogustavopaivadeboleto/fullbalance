@@ -98,9 +98,3 @@ Para rodar este projeto no seu ambiente de desenvolvimento, siga os passos abaix
 7.  Abra [http://localhost:3000](http://localhost:3000 ) no seu navegador para ver a aplicação funcionando.
 
 ---
-
-## 👨‍💻 Autor
-
-*   **[Seu Nome]** - [Seu GitHub](https://github.com/seu-usuario ) | [Seu LinkedIn](https://linkedin.com/in/seu-usuario )
-
----
