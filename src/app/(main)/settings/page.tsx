@@ -32,7 +32,7 @@ export default function SettingsPage() {
     }
     setIsSubmitting(true);
     try {
-      await addAccount(newAccountName, newAccountColor);
+      await addAccount({ name: newAccountName, color: newAccountColor });
       // Limpa os campos após o sucesso
       setNewAccountName("");
       setNewAccountColor("#4ade80");
