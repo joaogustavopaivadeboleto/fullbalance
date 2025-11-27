@@ -1,0 +1,36 @@
+/* src/styles/variables.css */
+
+:root {
+  /* Cores (Tema Escuro - Inspirado no Design) */
+  --color-background: #121212; /* Fundo principal muito escuro */
+  --color-surface: #1e1e1e;    /* Cor de superfície para cartões e formulários */
+  --color-primary: #4ade80;    /* Verde claro para botões e destaques */
+  --color-primary-darker: #188b42; /* Verde mais escuro para hover */
+  
+  --color-text-primary: #e5e7eb;   /* Texto principal (quase branco) */
+  --color-text-secondary: #9ca3af; /* Texto secundário (cinza claro) */
+  
+  --color-border: #4b4c4b;      /* Cor da borda (cinza escuro) */
+  --color-white: #ffffff;
+
+  /* Cores de Status (mantendo a ideia original) */
+  --color-success: #4ade80; /* Verde */
+  --color-danger: #f87171;
+  --color-danger-darker: #fa0707;  /* Vermelho/Salmão */
+
+  /* Espaçamentos (podemos manter os mesmos) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Tipografia */
+  --font-family: 'Inter', 'Arial', sans-serif; /* Usando uma fonte mais moderna como Inter */
+  --font-size-base: 16px;
+
+  /* Outros */
+  --border-radius-md: 20px;
+  --border-radius-sm: 8px; /* Bordas um pouco mais arredondadas */
+  --box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
