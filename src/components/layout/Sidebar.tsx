@@ -3,6 +3,8 @@
 
 import React from "react"; // Removido useState, useEffect, useRef
 import Link from "next/link";
+
+import Image from 'next/image'
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
@@ -44,8 +46,19 @@ export default function Sidebar() {
     // Adiciona a classe 'open' condicionalmente para o menu mobile
     <aside className={`sidebar ${isMenuOpen ? "open" : ""}`}>
       <div className="sidebar-header">
-        <h1 className="logo">FullBalance</h1>
-      </div>
+  <Link href="/dashboard" className="logo-link">
+    <Image
+      src="/Preto.png" // Certifique-se que este arquivo está na pasta /public
+      alt="Logo FullBalance"
+      width={40} // Ajuste a largura conforme necessário
+      height={57} // Ajuste a altura conforme necessário
+      className="logo-image"
+    />
+    <span className="logo-text">FullBalance</span>
+  </Link>
+</div>
+       
+
       <nav className="sidebar-nav">
         {navItems.map((item) => (
           <Link

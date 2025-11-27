@@ -1,8 +1,9 @@
-// src/app/(main)/dashboard/page.tsx
+// src/app/(main)/dashboard/page.tsx - VERSÃO FINAL COM NAVEGAÇÃO
 
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation"; // <<< PASSO 1: IMPORTAR O ROUTER
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccounts } from "@/hooks/useAccounts";
 import CustomDatePicker from "@/components/ui/datepicker/CustomDatePicker";
@@ -23,7 +24,9 @@ import {
 } from "react-icons/fi";
 
 export default function DashboardPage() {
-  // --- ESTADOS E HOOKS ---
+  const router = useRouter(); // <<< PASSO 2: CRIAR A INSTÂNCIA DO ROUTER
+
+  // --- ESTADOS E HOOKS (sem mudanças) ---
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
   const [filterAccountId, setFilterAccountId] = useState<string>("all");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -36,7 +39,7 @@ export default function DashboardPage() {
     error,
   } = useTransactions();
 
-  // --- LÓGICA DE FILTRAGEM ---
+  // --- LÓGICA DE FILTRAGEM (sem mudanças) ---
   const handleClearFilters = () => {
     setFilterType("all");
     setFilterAccountId("all");
@@ -62,39 +65,34 @@ export default function DashboardPage() {
     });
   }, [transactions, filterType, filterAccountId, startDate, endDate]);
 
-  // --- CÁLCULOS DO PERÍODO ATUAL ---
+  // --- CÁLCULOS (sem mudanças) ---
   const stats = useMemo(() => {
-    const initialBalanceTransaction = transactions.find(t => t.category === 'initial_balance');
+    const initialBalanceTransaction = transactions.find(t => t.category === 'saldo inicial');
     const initialBalanceValue = initialBalanceTransaction ? initialBalanceTransaction.amount : 0;
 
-    const flowTransactions = filteredTransactions.filter(t => t.category !== 'initial_balance');
+    const flowTransactionsInPeriod = filteredTransactions.filter(t => t.category !== 'saldo inicial');
+    const totalIncomeInPeriod = flowTransactionsInPeriod.filter(t => t.type === "income").reduce((acc, t) => acc + t.amount, 0);
+    const totalExpenseInPeriod = flowTransactionsInPeriod.filter(t => t.type === "expense").reduce((acc, t) => acc + t.amount, 0);
 
-    const totalIncome = flowTransactions.filter((t) => t.type === "income").reduce((acc, t) => acc + t.amount, 0);
-    const totalExpense = flowTransactions.filter((t) => t.type === "expense").reduce((acc, t) => acc + t.amount, 0);
-    
-    const balance = initialBalanceValue + totalIncome - totalExpense;
+    const end = endDate ? new Date(new Date(endDate).setHours(23, 59, 59, 999)) : new Date();
+    const transactionsUntilEndDate = transactions.filter(t => t.date.toDate() <= end);
+    const accumulatedBalance = transactionsUntilEndDate.reduce((acc, t) => (t.type === 'income' ? acc + t.amount : acc - t.amount), 0);
 
     return {
-      balance,
-      totalIncome,
-      totalExpense,
-      count: flowTransactions.length,
+      balance: accumulatedBalance,
+      totalIncome: totalIncomeInPeriod,
+      totalExpense: totalExpenseInPeriod,
+      count: flowTransactionsInPeriod.length,
       initialBalance: initialBalanceValue,
     };
-  }, [filteredTransactions, transactions]);
+  }, [filteredTransactions, transactions, endDate]);
 
-  // --- LÓGICA DE CÁLCULO DE PORCENTAGEM ---
   const percentageChanges = useMemo(() => {
     const initialBalance = stats.initialBalance;
-
-    if (initialBalance === 0) {
-      return { balanceChange: 0, incomeChange: 0, expenseChange: 0 };
-    }
-
+    if (initialBalance === 0) return { balanceChange: 0, incomeChange: 0, expenseChange: 0 };
     const balanceChange = ((stats.balance - initialBalance) / initialBalance) * 100;
     const incomeChange = (stats.totalIncome / initialBalance) * 100;
     const expenseChange = (stats.totalExpense / initialBalance) * -100;
-
     return {
       balanceChange: Math.round(balanceChange),
       incomeChange: Math.round(incomeChange),
@@ -119,24 +117,33 @@ export default function DashboardPage() {
 
   const accountsMap = useMemo(() => new Map(accounts.map((acc) => [acc.id, acc.name])), [accounts]);
   const isLoading = accountsLoading || transactionsLoading;
-  const latestTransactions = filteredTransactions.filter(t => t.category !== 'initial_balance').slice(0, 5);
+  const latestTransactions = filteredTransactions.filter(t => t.category !== 'saldo inicial').slice(0, 5);
 
   return (
     <div>
       <div className="page-header">
         <h1>Dashboard</h1>
+        {/* --- INÍCIO DA CORREÇÃO --- */}
         <div className="page-header-actions">
-          <button className="secondary-button">
+          <button
+            onClick={() => router.push('/reports')} // Navega para a página de relatórios
+            className="secondary-button"
+          >
             <FiDownload />
             Exportar
           </button>
-          <button className="primary-button">
+          <button
+            onClick={() => router.push('/transactions')} // Navega para a página de transações
+            className="primary-button"
+          >
             <FiPlus />
             Nova Transação
           </button>
         </div>
+        {/* --- FIM DA CORREÇÃO --- */}
       </div>
 
+      {/* O resto do JSX permanece o mesmo */}
       <div className="filter-bar">
         <select className="filter-select" value={filterType} onChange={(e) => setFilterType(e.target.value as any)}>
           <option value="all">Todos os Tipos</option>

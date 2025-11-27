@@ -6,10 +6,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { collection, query, where, onSnapshot, addDoc, deleteDoc, doc, orderBy } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 import { useAuth } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
 
 export interface Account {
   id: string;
   userId: string;
+  name: string;
+  color: string;
+}
+
+interface NewAccountData {
   name: string;
   color: string;
 }
@@ -20,27 +26,21 @@ export const useAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- INÍCIO DA CORREÇÃO ---
-  // Este é o useEffect completo e correto
   useEffect(() => {
-    // Se não há usuário, não faz nada e para de carregar
     if (!user) {
       setAccounts([]);
       setLoading(false);
       return;
     }
 
-    setLoading(true); // Inicia o carregamento
-
-    // Cria a query para buscar as contas do usuário logado, ordenadas por nome
+    setLoading(true);
     const accountsRef = collection(db, 'accounts');
     const q = query(
       accountsRef, 
       where('userId', '==', user.uid),
-      orderBy('name', 'asc') // Ordena as contas por nome
+      orderBy('name', 'asc')
     );
 
-    // Ouve as mudanças em tempo real
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedAccounts = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -48,33 +48,32 @@ export const useAccounts = () => {
       })) as Account[];
       
       setAccounts(fetchedAccounts);
-      setLoading(false); // PARA de carregar em caso de sucesso
+      setLoading(false);
     }, (err) => {
       console.error("Erro ao buscar contas:", err);
       setError("Falha ao carregar as contas.");
-      setLoading(false); // PARA de carregar em caso de erro
+      setLoading(false);
     });
 
-    // Limpa o listener ao desmontar o componente para evitar vazamento de memória
     return () => unsubscribe();
-  }, [user]); // O efeito só roda novamente se o objeto 'user' mudar
-  // --- FIM DA CORREÇÃO ---
+  }, [user]);
 
   const addAccount = useCallback(
-    async (name: string, color: string) => {
+    async (accountData: NewAccountData) => {
       if (!user) {
         setError('Usuário não autenticado.');
-        return;
+        throw new Error('Usuário não autenticado.');
       }
       try {
         await addDoc(collection(db, 'accounts'), {
           userId: user.uid,
-          name,
-          color,
+          name: accountData.name,
+          color: accountData.color,
         });
+        toast.success('Conta adicionada com sucesso!');
       } catch (e) {
         console.error('Erro ao adicionar conta:', e);
-        setError('Falha ao adicionar conta.');
+        toast.error('Falha ao adicionar conta.');
         throw e;
       }
     },
@@ -90,9 +89,10 @@ export const useAccounts = () => {
       try {
         const accountRef = doc(db, 'accounts', id);
         await deleteDoc(accountRef);
+        toast.success('Conta excluída com sucesso!');
       } catch (e) {
         console.error('Erro ao excluir conta:', e);
-        setError('Falha ao excluir conta.');
+        toast.error('Falha ao excluir conta.');
         throw e;
       }
     },

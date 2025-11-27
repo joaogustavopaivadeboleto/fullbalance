@@ -15,8 +15,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 import { useAuth } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
 
-// A interface Transaction não muda
 export interface Transaction {
   id: string;
   userId: string;
@@ -28,14 +28,7 @@ export interface Transaction {
   accountId: string;
 }
 
-// Define a estrutura do objeto de filtro que o hook pode receber
-interface TransactionsFilter {
-  accountId?: string;
-  type?: 'income' | 'expense';
-}
-
-// O hook agora aceita um filtro com accountId e/ou type
-export const useTransactions = (filter?: TransactionsFilter) => {
+export const useTransactions = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,26 +44,12 @@ export const useTransactions = (filter?: TransactionsFilter) => {
     setLoading(true);
     const transactionsRef = collection(db, 'transactions');
     
-    // Inicia a construção da query com as restrições padrão
-    let queryConstraints: any[] = [
+    const q = query(
+      transactionsRef,
       where('userId', '==', user.uid),
       orderBy('date', 'desc')
-    ];
+    );
 
-    // Adiciona o filtro de conta SE ele for fornecido
-    if (filter?.accountId) {
-      queryConstraints.push(where('accountId', '==', filter.accountId));
-    }
-
-    // Adiciona o filtro de tipo SE ele for fornecido
-    if (filter?.type) {
-      queryConstraints.push(where('type', '==', filter.type));
-    }
-
-    // Monta a query final com todas as restrições
-    const q = query(transactionsRef, ...queryConstraints);
-
-    // Ouve as mudanças em tempo real
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedTransactions = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -80,73 +59,72 @@ export const useTransactions = (filter?: TransactionsFilter) => {
       setLoading(false);
     }, (err) => {
       console.error("Erro ao buscar transações:", err);
-      setError("Falha ao carregar as transações. Verifique o console para um link de criação de índice do Firestore.");
+      setError("Falha ao carregar as transações.");
       setLoading(false);
     });
 
-    // Limpa o listener ao desmontar o componente
     return () => unsubscribe();
-  // Usamos JSON.stringify para criar uma dependência estável a partir do objeto de filtro.
-  // O efeito só será re-executado se os valores do filtro realmente mudarem.
-  }, [user, JSON.stringify(filter)]); 
+  }, [user]); 
 
-  // CREATE: Lógica para adicionar uma nova transação
   const addTransaction = useCallback(
     async (newTransaction: Omit<Transaction, 'id' | 'userId'>) => {
       if (!user) {
         setError('Usuário não autenticado.');
-        return;
+        throw new Error('Usuário não autenticado.');
       }
       try {
         await addDoc(collection(db, 'transactions'), {
           ...newTransaction,
           userId: user.uid,
         });
+        toast.success('Transação adicionada com sucesso!');
       } catch (e) {
         console.error('Erro ao adicionar transação:', e);
-        setError('Falha ao adicionar transação.');
+        toast.error('Falha ao adicionar transação.');
+        throw e;
       }
     },
     [user]
   );
 
-  // UPDATE: Lógica para atualizar uma transação
   const updateTransaction = useCallback(
     async (id: string, updatedFields: Partial<Omit<Transaction, 'id' | 'userId'>>) => {
       if (!user) {
         setError('Usuário não autenticado.');
-        return;
+        throw new Error('Usuário não autenticado.');
       }
       try {
         const transactionRef = doc(db, 'transactions', id);
         await updateDoc(transactionRef, updatedFields);
+        toast.success('Transação atualizada com sucesso!');
       } catch (e) {
         console.error('Erro ao atualizar transação:', e);
-        setError('Falha ao atualizar transação.');
+        toast.error('Falha ao atualizar transação.');
+        throw e;
       }
     },
     [user]
   );
 
-  // DELETE: Lógica para excluir uma transação
   const deleteTransaction = useCallback(
     async (id: string) => {
       if (!user) {
         setError('Usuário não autenticado.');
-        return;
+        throw new Error('Usuário não autenticado.');
       }
       try {
         const transactionRef = doc(db, 'transactions', id);
         await deleteDoc(transactionRef);
+        toast.success('Transação excluída com sucesso!');
       } catch (e) {
         console.error('Erro ao excluir transação:', e);
-        setError('Falha ao excluir transação.');
+        toast.error('Falha ao excluir transação.');
+        throw e;
       }
     },
     [user]
   );
 
-  // Retorna os dados e as funções para serem usados nos componentes
   return {
     transactions,
     loading,

@@ -1,4 +1,5 @@
-// src/components/ui/datepicker/CustomDatePicker.tsx
+// src/components/ui/datepicker/CustomDatePicker.tsx - VERSÃO CORRIGIDA
+
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -8,29 +9,26 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { FiCalendar } from "react-icons/fi";
 
-// --- INÍCIO DA MUDANÇA 1: ATUALIZAR A INTERFACE DE PROPS ---
+// --- CORREÇÃO 1: Remover a propriedade que não existe ---
 interface CustomDatePickerProps {
   date: Date | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-  placeholder?: string; // Adiciona a propriedade placeholder como opcional
+  placeholder?: string;
+  position?: 'top' | 'bottom'; // Usaremos isso para controlar a posição via CSS
 }
-// --- FIM DA MUDANÇA 1 ---
 
 export default function CustomDatePicker({
   date,
   setDate,
-  placeholder = "Selecione uma data", // Define um valor padrão para o placeholder
+  placeholder = "Selecione uma data",
+  position = 'bottom', // Posição padrão é para baixo
 }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  // Lógica para fechar o popover ao clicar fora
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node)
-      ) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
@@ -44,7 +42,7 @@ export default function CustomDatePicker({
 
   const handleDayClick = (selectedDay: Date | undefined) => {
     setDate(selectedDay);
-    setIsOpen(false); // Fecha o popover após selecionar uma data
+    setIsOpen(false);
   };
 
   return (
@@ -54,14 +52,13 @@ export default function CustomDatePicker({
         className="datepicker-trigger"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {/* --- INÍCIO DA MUDANÇA 2: USAR O PLACEHOLDER --- */}
         <span>{date ? format(date, "dd/MM/yyyy") : placeholder}</span>
-        {/* --- FIM DA MUDANÇA 2 --- */}
         <FiCalendar className="datepicker-icon" />
       </button>
 
       {isOpen && (
-        <div className="datepicker-popover bottom">
+        // --- CORREÇÃO 2: Usar a classe de posição ---
+        <div className={`datepicker-popover ${position}`}>
           <DayPicker
             mode="single"
             selected={date}

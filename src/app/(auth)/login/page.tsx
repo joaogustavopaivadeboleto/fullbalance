@@ -5,7 +5,9 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation"; // Importa o hook de roteamento do Next.js
+import Link from "next/link";
 
+import Image from "next/image";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,8 +44,17 @@ export default function LoginPage() {
   return (
     <div className="auth-container">
       {/* Adicionar logo aqui depois */}
+      <div className="sidebar-header">
+        <Image
+          src="/Preto.png" // Certifique-se que este arquivo está na pasta /public
+          alt="Logo FullBalance"
+          width={40} // Ajuste a largura conforme necessário
+          height={57} // Ajuste a altura conforme necessário
+          className="logo-image"
+        />
+      </div>
       <h2>Login</h2>
-      <p>Preencha o formulário abaixo para fazer login no sistema</p>
+      <p>Preencha o formulário abaixo para fazer login no <span >FullBalance</span></p>
       <form onSubmit={handleSubmit} className="auth-form">
         <label htmlFor="email">Email</label>
         <input

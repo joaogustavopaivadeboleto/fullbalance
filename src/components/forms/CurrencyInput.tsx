@@ -1,36 +1,35 @@
-// src/components/ui/forms/CurrencyInput.tsx
+// src/components/forms/CurrencyInput.tsx
 "use client";
 
-import React from "react";
-import { NumericFormat, NumericFormatProps } from "react-number-format";
+import React from 'react';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
-interface CurrencyInputProps extends Omit<NumericFormatProps, "onValueChange"> {
+interface CurrencyInputProps extends Omit<NumericFormatProps, 'onValueChange'> {
   onValueChange: (value: number | undefined) => void;
+  value: number | string | null | undefined;
 }
 
-const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
-  (props, ref) => {
-    const { onValueChange, ...otherProps } = props;
+const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>((props, ref) => {
+  const { onValueChange, ...otherProps } = props;
 
-    return (
-      <NumericFormat
-        getInputRef={ref}
-        {...otherProps}
-        onValueChange={(values) => {
-          onValueChange(values.floatValue);
-        }}
-        thousandSeparator="."
-        decimalSeparator=","
-        prefix="R$ "
-        decimalScale={2}
-        fixedDecimalScale
-        allowNegative={false}
-        className="form-input" // Reutiliza nossa classe de input padrão
-      />
-    );
-  }
-);
+  return (
+    <NumericFormat
+      {...otherProps}
+      getInputRef={ref}
+      onValueChange={(values) => {
+        onValueChange(values.floatValue);
+      }}
+      thousandSeparator="."
+      decimalSeparator=","
+      prefix="R$ "
+      decimalScale={2}
+      fixedDecimalScale
+      allowNegative={false}
+      placeholder="R$ 0,00"
+    />
+  );
+});
 
-CurrencyInput.displayName = "CurrencyInput";
+CurrencyInput.displayName = 'CurrencyInput';
 
 export default CurrencyInput;

@@ -40,13 +40,13 @@ h3 {
 .main-layout {
   display: grid;
   grid-template-columns: 250px 1fr;
-  min-height: 100vh;
+  /* Removemos o min-height daqui para controlar a altura nos filhos */
 }
 
 .content-wrapper {
-  display: flex;
-  flex-direction: column;
+  /* Esta será a área que rola */
   overflow-y: auto;
+  height: 100vh; /* Ocupa a altura total da tela */
 }
 
 .sidebar {
@@ -55,19 +55,53 @@ h3 {
   display: flex;
   flex-direction: column;
   padding: var(--spacing-lg);
+  
+  /* --- INÍCIO DA MÁGICA --- */
+  position: sticky; /* Faz a sidebar "grudar" */
+  top: 0;           /* Gruda no topo da tela */
+  height: 100vh;    /* Garante que ela tenha a altura total da janela */
+  /* --- FIM DA MÁGICA --- */
+}
+.sidebar .Logo-marcar{
+  align-items: center;
 }
 
 .main-content {
   flex: 1;
   padding: var(--spacing-xl);
 }
-
+.Logo-marcar{
+  align-items: center;
+}
 /* 3. Estilos da Sidebar */
-.sidebar-header .logo {
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
+.sidebar-header {
+  /* Removemos o text-align: center daqui */
   margin-bottom: var(--spacing-xl);
+}
+
+/* O link que envolve o logo e o texto */
+.logo-link {
+  display: flex; /* ATIVA O FLEXBOX! */
+  align-items: center; /* Alinha verticalmente a imagem e o texto */
+  justify-content: center; /* Centraliza tudo horizontalmente */
+  gap: var(--spacing-sm); /* Cria um espaço entre a imagem e o texto */
+  text-decoration: none; /* Remove o sublinhado do link */
+  color: var(--color-text-primary); /* Garante que o texto tenha a cor correta */
+}
+
+.logo-link:hover {
+  text-decoration: none; /* Garante que não apareça sublinhado no hover */
+}
+
+/* A imagem do logo */
+.logo-image {
+  /* O componente Image do Next já lida com o tamanho, mas podemos adicionar estilos aqui se necessário */
+}
+
+/* O texto "FullBalance" */
+.logo-text {
+  font-size: 1.5em;
+  font-weight: 700; /* Um pouco mais forte para o nome da marca */
 }
 
 .sidebar-nav ul {
@@ -201,7 +235,7 @@ h3 {
 }
 
 .danger-button {
-  background-color: var(--color-danger);
+  background-color: var(--color-danger-darker);
   color: var(--color-white);
 }
 
@@ -376,12 +410,50 @@ h3 {
   gap: var(--spacing-xs);
 }
 
-.form-field label,
-.datepicker-wrapper label {
-  font-weight: 500;
-  font-size: 0.9em;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-xs);
+.datepicker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.datepicker-popover {
+  position: absolute;
+  z-index: 1000;
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+}
+
+/* Posicionamento para baixo (padrão) */
+.datepicker-popover.bottom {
+  top: 100%;
+  left: 0;
+}
+
+/* Posicionamento para cima */
+.datepicker-popover.top {
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 8px; /* Adiciona espaço entre o input e o calendário */
+  margin-top: 0;
+}
+
+/* Estilos internos do react-day-picker para combinar com o tema */
+.rdp {
+  --rdp-cell-size: 36px;
+  --rdp-caption-font-size: 1rem;
+  --rdp-accent-color: var(--primary-color);
+  --rdp-background-color: transparent;
+  --rdp-accent-color-dark: var(--primary-color);
+  --rdp-background-color-dark: transparent;
+  --rdp-outline: 2px solid var(--primary-color);
+  --rdp-outline-selected: 3px solid var(--primary-color);
+  --rdp-color: var(--text-primary);
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: var(--background-hover);
 }
 
 .form-field input,
@@ -898,7 +970,6 @@ h3 {
 .transaction-amount.expense {
   color: var(--color-danger);
 }
-
 .monthly-summary-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -985,6 +1056,17 @@ h3 {
   border-radius: var(--border-radius-sm);
   background-color: var(--color-border);
   color: var(--color-primary);
+  font-size: 1.2em;
+}
+.saida .card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-border);
+  color: var(--color-danger);
   font-size: 1.2em;
 }
 
@@ -1277,4 +1359,274 @@ h3 {
 
 .initial-balance-container input:focus {
   outline: none;
+}
+.react-datepicker-popper[data-placement^="top"] {
+  padding-bottom: 8px !important;
+}
+
+.react-datepicker-popper[data-placement^="bottom"] {
+  padding-top: 8px !important;
+}
+.initial-balance-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0; /* Ajuste no padding para alinhar melhor */
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  grid-column: 1 / -1; /* Garante que ocupe a largura total no grid do formulário */
+}
+
+.initial-balance-toggle .switch-label {
+  font-weight: 500;
+  transition: color 0.3s ease;
+  color: var(--color-text-secondary);
+}
+
+/* Efeito de hover no container principal */
+.initial-balance-toggle:hover .slider {
+  border-color: var(--text-primary);
+}
+
+.initial-balance-toggle:hover .switch-label {
+  color: var(--text-primary);
+}
+
+/* O container do switch em si */
+.initial-balance-toggle .switch {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0; /* Impede que o switch seja espremido */
+}
+
+/* Esconde o checkbox padrão */
+.initial-balance-toggle .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* O círculo externo do switch (a borda) */
+.initial-balance-toggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  border: 2px solid #666; /* Borda cinza quando inativo */
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* O círculo interno do switch (o preenchimento) */
+.initial-balance-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  top: 3px;
+  background-color: transparent; /* Invisível quando inativo */
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Estilos para o estado ATIVO (checado) */
+.initial-balance-toggle input:checked + .slider {
+  border-color: var(--color-danger); /* Borda fica vermelha */
+}
+
+.initial-balance-toggle input:checked + .slider:before {
+  background-color: var(--color-danger); /* Círculo interno fica vermelho */
+}
+/* ... e todo o resto que se segue até o final do arquivo ... */
+.color-palette-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 colunas de cores */
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.color-swatch {
+  width: 100%;
+  padding-bottom: 100%; /* Truque para criar um quadrado perfeito (aspect-ratio) */
+  height: 0;
+  border-radius: var(--border-radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.selected {
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+/* Remove o outline padrão do navegador ao focar */
+.color-swatch:focus {
+  outline: none;
+}
+.color-swatch:focus-visible {
+  border-color: var(--color-primary);
+}
+.advanced-color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg); /* Espaço entre a paleta e o slider */
+}
+advanced-color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.intensity-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.intensity-slider-container label {
+  font-size: 0.9em;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* --- INÍCIO DA MUDANÇA: SLIDER COM GRADIENTE --- */
+
+.intensity-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px; /* Um pouco mais alto para o gradiente ficar melhor */
+  cursor: pointer;
+  border-radius: var(--border-radius-full);
+  outline: none;
+  transition: opacity 0.2s;
+  /* O gradiente é criado aqui, usando a variável que passamos! */
+  background: linear-gradient(to right, 
+    hsl(from var(--base-color) h s 10%), /* Cor escura */
+    var(--base-color),                  /* Cor base no meio */
+    hsl(from var(--base-color) h s 90%)   /* Cor clara */
+  );
+}
+
+/* Estilização do "polegar" (a bolinha) para Webkit (Chrome, Safari) */
+.intensity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  /* A cor da bolinha agora é a cor primária da aplicação, como na imagem */
+  background: var(--color-primary);
+  border: 3px solid var(--color-background);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  margin-top: -5px; /* Centraliza a bolinha verticalmente na barra */
+}
+
+/* Estilização do "polegar" para Mozilla (Firefox) */
+.intensity-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--color-primary);
+  border: 3px solid var(--color-background);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  margin-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.9em;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.items-per-page-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.items-per-page-selector select {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: 6px 8px;
+}
+
+.navigation-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.navigation-buttons button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.navigation-buttons button:hover:not(:disabled) {
+  background-color: var(--color-border);
+  border-color: var(--color-primary);
+}
+
+.navigation-buttons button:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  background-color: var(--color-background);
+}
+.advanced-form-grid {
+  display: grid;
+  /* Cria um grid de 4 colunas com espaçamento */
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+/* Classe para um item ocupar 2 colunas */
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+/* Classe para um item ocupar 3 colunas */
+.col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
+/* Classe para um item ocupar as 4 colunas */
+.col-span-4 {
+  grid-column: span 4 / span 4;
 }

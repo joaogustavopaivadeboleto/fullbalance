@@ -1,11 +1,10 @@
-// src/app/layout.tsx
+// src/app/layout.tsx - VERSÃO FINAL E CORRIGIDA
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext"; // 1. Importe o AuthProvider
-import { ThemeProvider } from "@/context/ThemeContext";
-import { MobileMenuProvider } from "@/context/MobileMenuContext";
+import { Providers } from "@/context/Providers"; // <<< 1. Importe o novo componente Providers
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,12 +23,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning={true}>
       <body className={inter.className}>
-        {/* 2. Envolva TODOS os children com o AuthProvider */}
-        <AuthProvider>
-          <ThemeProvider>
-            <MobileMenuProvider>{children}</MobileMenuProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        {/* 2. Envolva os children apenas com o componente Providers */}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
