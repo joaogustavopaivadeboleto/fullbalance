@@ -1,78 +1,114 @@
 // src/components/dashboard/MonthlySummaryCard.tsx
-import React, { useMemo } from 'react';
-import { Transaction } from '@/hooks/useTransactions';
+
+"use client";
+
+import React, { useMemo } from "react";
+import { Transaction } from "@/hooks/useTransactions";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+// Interface para definir a estrutura do nosso resumo mensal
+interface MonthlySummary {
+  month: string;
+  income: number;
+  expense: number;
+}
 
 interface MonthlySummaryCardProps {
   transactions: Transaction[];
+  isFilterActive: boolean;
 }
 
-export default function MonthlySummaryCard({ transactions }: MonthlySummaryCardProps) {
-  const monthlyData = useMemo(() => {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+// Função para formatar valores monetários
+const formatCurrency = (value: number) => {
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+};
 
-    const data = transactions.reduce((acc, t) => {
-      const date = t.date.toDate();
-      const month = date.getMonth();
-      const year = date.getFullYear();
+export default function MonthlySummaryCard({
+  transactions,
+  isFilterActive,
+}: MonthlySummaryCardProps) {
+  const monthlySummaries = useMemo(() => {
+    // 1. Agrupa as transações por mês/ano
+    const summaryMap = new Map<string, { income: number; expense: number }>();
 
-      // Considera apenas transações dos últimos 12 meses
-      const monthDiff = (currentYear - year) * 12 + (currentMonth - month);
-      if (monthDiff < 0 || monthDiff >= 12) {
-        return acc;
+    transactions.forEach((transaction) => {
+      // Cria uma chave única para cada mês/ano (ex: "2025-11")
+      const monthKey = format(transaction.date.toDate(), "yyyy-MM");
+
+      if (!summaryMap.has(monthKey)) {
+        summaryMap.set(monthKey, { income: 0, expense: 0 });
       }
 
-      const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
-      if (!acc[monthKey]) {
-        acc[monthKey] = { income: 0, expense: 0 };
-      }
+      const currentMonth = summaryMap.get(monthKey)!;
 
-      if (t.type === 'income') {
-        acc[monthKey].income += t.amount;
+      if (transaction.type === "income") {
+        currentMonth.income += transaction.amount;
       } else {
-        acc[monthKey].expense += t.amount;
+        currentMonth.expense += transaction.amount;
       }
+    });
 
-      return acc;
-    }, {} as Record<string, { income: number; expense: number }>);
+    // 2. Converte o mapa em um array de objetos e formata o nome do mês
+    const summaries: MonthlySummary[] = Array.from(summaryMap.entries()).map(
+      ([monthKey, values]) => {
+        const date = new Date(`${monthKey}-02`); // Usamos dia 02 para evitar bugs de fuso horário
+        const monthName = format(date, "MMMM", { locale: ptBR });
+        // Capitaliza a primeira letra do mês
+        const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
-    // Ordena e formata os dados
-    return Object.entries(data)
-      .sort(([keyA], [keyB]) => keyB.localeCompare(keyA)) // Mais recente primeiro
-      .slice(0, 6) // Pega os últimos 6 meses com atividade
-      .map(([key, value]) => {
-        const [year, month] = key.split('-');
-        const date = new Date(Number(year), Number(month) - 1);
-        const monthName = date.toLocaleString('pt-BR', { month: 'long' });
         return {
-          monthName: monthName.charAt(0).toUpperCase() + monthName.slice(1),
-          ...value,
+          month: `${capitalizedMonth} ${format(date, "yyyy")}`,
+          ...values,
         };
-      });
+      }
+    );
+
+    // 3. Ordena os meses do mais recente para o mais antigo
+    return summaries.sort((a, b) => new Date(b.month).getTime() - new Date(a.month).getTime());
+
   }, [transactions]);
+
+  // 4. Lógica para decidir quais resumos mostrar
+  const displayedSummaries = useMemo(() => {
+    if (isFilterActive) {
+      return monthlySummaries; // Se houver filtro, mostra todos os meses do período
+    }
+    // Se não houver filtro, encontra o resumo do mês atual
+    const now = new Date();
+    const currentMonthKey = `${format(now, "MMMM", { locale: ptBR })} ${now.getFullYear()}`;
+    const capitalizedCurrentMonth = currentMonthKey.charAt(0).toUpperCase() + currentMonthKey.slice(1);
+    
+    return monthlySummaries.filter(summary => summary.month === capitalizedCurrentMonth);
+
+  }, [monthlySummaries, isFilterActive]);
 
   return (
     <div className="monthly-summary-card">
       <h2>Resumo Mensal</h2>
-      {monthlyData.length > 0 ? (
+      {displayedSummaries.length > 0 ? (
         <ul>
-          {monthlyData.map(data => (
-            <li key={data.monthName}>
-              <span className="month-name">{data.monthName}</span>
+          {displayedSummaries.map((summary) => (
+            <li key={summary.month}>
+              <span className="month-name">{summary.month.split(' ')[0]}</span>
               <div className="monthly-values">
                 <span className="income">
-                  + R$ {data.income.toFixed(2).replace('.', ',')}
+                  + {formatCurrency(summary.income)}
                 </span>
                 <span className="expense">
-                  - R$ {data.expense.toFixed(2).replace('.', ',')}
+                  - {formatCurrency(summary.expense)}
                 </span>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="empty-state-text">Sem dados para exibir.</p>
+        <p className="empty-state-text">
+          Nenhuma transação encontrada para o período.
+        </p>
       )}
     </div>
   );

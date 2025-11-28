@@ -40,7 +40,7 @@ export default function AddTransactionForm({
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     return transactions.some(t => {
-      if (t.category === 'initial_balance') {
+      if (t.category === 'saldo inicial') {
         const transactionDate = t.date.toDate();
         return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
       }
@@ -50,11 +50,11 @@ export default function AddTransactionForm({
 
   useEffect(() => {
     if (transactionToEdit) {
-      const isInitial = transactionToEdit.category === "initial_balance";
+      const isInitial = transactionToEdit.category === "saldo inicial";
       setTitle(isInitial ? "Saldo Inicial" : transactionToEdit.title);
       setAmount(transactionToEdit.amount);
       setType(transactionToEdit.type);
-      setCategory(isInitial ? "initial_balance" : transactionToEdit.category);
+      setCategory(isInitial ? "saldo inicial" : transactionToEdit.category);
       setAccountId(transactionToEdit.accountId);
       setDate(transactionToEdit.date.toDate());
       setIsInitialBalance(isInitial);
@@ -75,7 +75,7 @@ export default function AddTransactionForm({
     if (nextValue) {
       setTitle("Saldo Inicial");
       setType("income");
-      setCategory("initial_balance");
+      setCategory("saldo inicial");
     } else {
       setTitle("");
       setCategory("");
@@ -95,7 +95,7 @@ export default function AddTransactionForm({
       title,
       amount,
       type,
-      category: isInitialBalance ? "initial_balance" : category,
+      category: isInitialBalance ? "saldo inicial" : category,
       accountId,
       date: Timestamp.fromDate(date),
     };
@@ -174,7 +174,7 @@ export default function AddTransactionForm({
           <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} required disabled={isInitialBalance}>
             <option value="" disabled>Selecione uma categoria</option>
             {isInitialBalance ? (
-              <option value="initial_balance">Saldo Inicial</option>
+              <option value="saldo inicial">Saldo Inicial</option>
             ) : (
               defaultCategories.map(cat => (
                 <option key={cat} value={cat.toLowerCase()}>{cat}</option>

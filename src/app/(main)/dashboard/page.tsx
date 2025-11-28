@@ -125,13 +125,7 @@ export default function DashboardPage() {
         <h1>Dashboard</h1>
         {/* --- INÍCIO DA CORREÇÃO --- */}
         <div className="page-header-actions">
-          <button
-            onClick={() => router.push('/reports')} // Navega para a página de relatórios
-            className="secondary-button"
-          >
-            <FiDownload />
-            Exportar
-          </button>
+          
           <button
             onClick={() => router.push('/transactions')} // Navega para a página de transações
             className="primary-button"
@@ -156,7 +150,7 @@ export default function DashboardPage() {
         </select>
         <div className="filter-datepicker"><CustomDatePicker date={startDate} setDate={setStartDate} placeholder="Data de Início" /></div>
         <div className="filter-datepicker"><CustomDatePicker date={endDate} setDate={setEndDate} placeholder="Data de Fim" /></div>
-        {isAnyFilterActive && (<button onClick={handleClearFilters} className="clear-filters-button"><FiXCircle /> Limpar Filtros</button>)}
+        {isAnyFilterActive && (<button onClick={handleClearFilters} className="clear-filters-button"><FiXCircle /> Limpar Todos os Filtros</button>)}
       </div>
 
       {isAnyFilterActive && (
@@ -224,7 +218,10 @@ export default function DashboardPage() {
                   <p className="empty-state-text">Nenhuma transação encontrada.</p>
                 )}
               </div>
-              <MonthlySummaryCard transactions={transactions} />
+              <MonthlySummaryCard
+    transactions={filteredTransactions}
+    isFilterActive={isAnyFilterActive}
+  />
             </div>
           </div>
         </>

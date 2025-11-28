@@ -1,4 +1,5 @@
-// src/context/AuthContext.tsx
+// src/context/AuthContext.tsx - VERSÃO FINAL COM REDIRECIONAMENTO
+
 "use client";
 
 import React, {
@@ -15,12 +16,12 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   updateProfile,
-  // --- INÍCIO DA MUDANÇA 1: IMPORTAR AS FUNÇÕES DE PERSISTÊNCIA ---
   setPersistence,
   indexedDBLocalPersistence,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
-import FullscreenLoader from "@/components/ui/FullscreenLoader"; // Adicionado para uma melhor experiência de carregamento
+import FullscreenLoader from "@/components/ui/FullscreenLoader";
+import { useRouter } from 'next/navigation'; // <<< 1. IMPORTAR O ROUTER
 
 interface AuthContextType {
   user: User | null;
@@ -35,6 +36,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter(); // <<< 2. INICIALIZAR O ROUTER
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -45,14 +47,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    // --- INÍCIO DA MUDANÇA 2: DEFINIR A PERSISTÊNCIA ANTES DO LOGIN ---
-    // Esta linha faz com que o login seja "lembrado" no dispositivo.
     await setPersistence(auth, indexedDBLocalPersistence);
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signUp = async (name: string, email: string, password: string) => {
-    // --- INÍCIO DA MUDANÇA 3: DEFINIR A PERSISTÊNCIA TAMBÉM NO CADASTRO ---
     await setPersistence(auth, indexedDBLocalPersistence);
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -67,21 +66,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // --- INÍCIO DA CORREÇÃO ---
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth); // Desloga do Firebase
+      router.push('/login'); // <<< 3. REDIRECIONA PARA A PÁGINA DE LOGIN
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      // Garante o redirecionamento mesmo em caso de erro
+      router.push('/login');
+    }
   };
+  // --- FIM DA CORREÇÃO ---
 
   const value = {
     user,
     loading,
     signIn,
     signUp,
-    logout,
+    logout, // Fornece a nova função de logout corrigida
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {/* Usar um loader em tela cheia evita "flashes" de conteúdo */}
       {loading ? <FullscreenLoader /> : children}
     </AuthContext.Provider>
   );

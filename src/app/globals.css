@@ -1,7 +1,7 @@
 /* src/app/globals.css - PARTE 1 DE 3 */
 
-@import url('../styles/variables.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap' );
+@import url("../styles/variables.css");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap");
 
 /* 1. Reset Básico e Padrões Globais */
 * {
@@ -40,68 +40,202 @@ h3 {
 .main-layout {
   display: grid;
   grid-template-columns: 250px 1fr;
-  /* Removemos o min-height daqui para controlar a altura nos filhos */
+  height: 100vh; /* <<< ADICIONE ESTA LINHA (troca min-height por height) */
+  overflow: hidden; /* <<< ADICIONE ESTA LINHA (impede a página inteira de rolar) */
+  transition: grid-template-columns 0.3s ease-in-out;
+}
+
+.main-layout.sidebar-minimized {
+  grid-template-columns: 80px 1fr;
 }
 
 .content-wrapper {
-  /* Esta será a área que rola */
-  overflow-y: auto;
-  height: 100vh; /* Ocupa a altura total da tela */
-}
-
-.sidebar {
-  background-color: var(--color-surface);
-  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-lg);
-  
-  /* --- INÍCIO DA MÁGICA --- */
-  position: sticky; /* Faz a sidebar "grudar" */
-  top: 0;           /* Gruda no topo da tela */
-  height: 100vh;    /* Garante que ela tenha a altura total da janela */
-  /* --- FIM DA MÁGICA --- */
-}
-.sidebar .Logo-marcar{
-  align-items: center;
+  overflow-y: auto;
+  background-color: var(--color-background);
 }
 
 .main-content {
   flex: 1;
   padding: var(--spacing-xl);
+  overflow-y: auto; /* <<< ADICIONE ESTA LINHA */
 }
-.Logo-marcar{
+
+/* --- Header Principal --- */
+.main-header {
+  display: flex;
   align-items: center;
+  justify-content: space-between; /* <<< A LINHA MAIS IMPORTANTE: Alinha os itens nas pontas */
+  padding: 0 var(--spacing-xl);
+  height: 70px;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 900;
 }
-/* 3. Estilos da Sidebar */
+
+.header-toggle-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-toggle-button:hover {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+.header-user-menu {
+  position: relative; /* Necessário para o posicionamento do dropdown */
+}
+
+.user-avatar-button {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.user-avatar-button:hover {
+  background-color: var(--color-primary-variant);
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px); /* Espaçamento abaixo do avatar */
+  right: 0;
+  width: 280px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-header .user-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-header .user-email {
+  font-size: 0.9em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-logout-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.dropdown-logout-button:hover {
+  background-color: var(--color-danger-variant);
+}
+/* --- Estilos da Sidebar (Mantendo o Visual Original) --- */
+.sidebar {
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+  /* --- A MÁGICA ESTÁ AQUI --- */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl); /* Cria o espaço entre o header e a navegação */
+}
+
 .sidebar-header {
-  /* Removemos o text-align: center daqui */
+  /* Garante que o header da sidebar não encolha */
+  flex-shrink: 0; 
+}
+
+.sidebar-nav {
+  /* Opcional: se a lista de links for muito grande, ela terá sua própria rolagem */
+  overflow-y: auto;
+}
+
+.sidebar-nav a.active {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  font-weight: bold;
+}
+
+/* --- Estado Minimizado --- */
+.sidebar.minimized {
+  width: 80px;
+  padding: var(--spacing-lg) var(--spacing-sm);
+}
+
+.sidebar.minimized .logo-link,
+.sidebar.minimized .sidebar-nav a,
+.sidebar.minimized .logout-button,
+.sidebar.minimized .user-profile {
+  justify-content: center;
+}
+
+.sidebar.minimized .logo-text,
+.sidebar.minimized .nav-label,
+.sidebar.minimized .user-info {
+  display: none;
+}
+
+/* Ajuste no logo para o novo layout */
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  text-decoration: none;
   margin-bottom: var(--spacing-xl);
 }
-
-/* O link que envolve o logo e o texto */
-.logo-link {
-  display: flex; /* ATIVA O FLEXBOX! */
-  align-items: center; /* Alinha verticalmente a imagem e o texto */
-  justify-content: center; /* Centraliza tudo horizontalmente */
-  gap: var(--spacing-sm); /* Cria um espaço entre a imagem e o texto */
-  text-decoration: none; /* Remove o sublinhado do link */
-  color: var(--color-text-primary); /* Garante que o texto tenha a cor correta */
+.logo-icon {
+  flex-shrink: 0;
 }
-
-.logo-link:hover {
-  text-decoration: none; /* Garante que não apareça sublinhado no hover */
-}
-
-/* A imagem do logo */
-.logo-image {
-  /* O componente Image do Next já lida com o tamanho, mas podemos adicionar estilos aqui se necessário */
-}
-
-/* O texto "FullBalance" */
 .logo-text {
   font-size: 1.5em;
-  font-weight: 700; /* Um pouco mais forte para o nome da marca */
+  font-weight: bold;
+  color: var(--color-text-primary);
+  margin: 0;
+  white-space: nowrap;
 }
 
 .sidebar-nav ul {
@@ -489,6 +623,8 @@ h3 {
 .form-actions .secondary-button {
   width: auto;
 }
+
+/*  */
 /* src/app/globals.css - PARTE 2 DE 3 */
 
 /* 7. Estilos de Listas e Tabelas */
@@ -677,6 +813,7 @@ h3 {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: var(--spacing-md);
 }
 
 .modal-content {
@@ -689,15 +826,18 @@ h3 {
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--spacing-lg); /* Ajustado para ser consistente */
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -712,12 +852,28 @@ h3 {
   cursor: pointer;
 }
 
+.modal-body {
+  padding: var(--spacing-lg); /* Espaçamento interno do corpo */
+  overflow-y: auto; /* A barra de rolagem aparecerá AQUI, se necessário */
+  flex-grow: 1; /* Faz o corpo ocupar todo o espaço disponível */
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg); /* Ajustado para ser consistente */
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
+/* .modal-content .form-actions {
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  padding-top: 10px;
+  display: flex;
+} */
 
 /* src/app/globals.css - PARTE 3 DE 3 */
 
@@ -755,6 +911,7 @@ h3 {
 
 .datepicker-popover {
   position: absolute;
+  overflow: visible;
   z-index: 1010;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1198,7 +1355,7 @@ h3 {
   .mobile-header .logo {
     font-size: 1.5rem;
   }
-/* src/app/globals.css - FINAL DA PARTE 3 */
+  /* src/app/globals.css - FINAL DA PARTE 3 */
 
   .mobile-menu-button {
     background: none;
@@ -1518,10 +1675,11 @@ advanced-color-picker {
   outline: none;
   transition: opacity 0.2s;
   /* O gradiente é criado aqui, usando a variável que passamos! */
-  background: linear-gradient(to right, 
-    hsl(from var(--base-color) h s 10%), /* Cor escura */
-    var(--base-color),                  /* Cor base no meio */
-    hsl(from var(--base-color) h s 90%)   /* Cor clara */
+  background: linear-gradient(
+    to right,
+    hsl(from var(--base-color) h s 10%),
+    /* Cor escura */ var(--base-color),
+    /* Cor base no meio */ hsl(from var(--base-color) h s 90%) /* Cor clara */
   );
 }
 
@@ -1610,6 +1768,7 @@ advanced-color-picker {
   background-color: var(--color-background);
 }
 .advanced-form-grid {
+  margin-top: 80px;
   display: grid;
   /* Cria um grid de 4 colunas com espaçamento */
   grid-template-columns: repeat(4, 1fr);
@@ -1629,4 +1788,32 @@ advanced-color-picker {
 /* Classe para um item ocupar as 4 colunas */
 .col-span-4 {
   grid-column: span 4 / span 4;
+}
+.account-name-preview-wrapper {
+  position: relative; /* Necessário para o posicionamento absoluto do filho */
+  display: flex;
+  align-items: center;
+  grid-column: 1 / -1; /* Garante que ocupe a largura total do grid do formulário */
+}
+
+/* A bolinha de prévia da cor */
+.color-preview-dot {
+  position: absolute; /* Posiciona a bolinha em relação ao wrapper */
+  left: 12px; /* Distância da borda esquerda */
+  top: 45px; /* Alinha verticalmente ao centro */
+  transform: translateY(
+    -50%
+  ); /* Ajuste fino para centralização vertical perfeita */
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-background); /* Borda para destacar do fundo do input */
+  box-shadow: 0 0 0 1px var(--color-border); /* Sombra sutil para melhor visibilidade */
+  transition: background-color 0.2s ease; /* Animação suave da troca de cor */
+}
+
+/* Ajusta o padding do input para não sobrepor a bolinha */
+.account-name-preview-wrapper input {
+  padding-left: 44px !important; /* Espaço extra à esquerda para a bolinha */
 }

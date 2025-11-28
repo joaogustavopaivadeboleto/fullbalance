@@ -1,11 +1,11 @@
-// src/components/Accounts/AddAccountForm.tsx - VERSÃO FINAL COM COLOR PALETTE
+// src/components/Accounts/AddAccountForm.tsx - VERSÃO FINAL CORRIGIDA
 
 "use client";
 
 import React, { useState } from "react";
 import { useAccounts } from "@/hooks/useAccounts";
 import FormField from "../forms/FormField";
-import ColorPalettePicker from "../ui/ColorPalettePicker"; // <<< 1. Importar o novo componente
+import ColorPalettePicker from "../ui/ColorPalettePicker";
 
 interface AddAccountFormProps {
   onFormSubmit: () => void;
@@ -28,6 +28,7 @@ export default function AddAccountForm({ onFormSubmit }: AddAccountFormProps) {
     }
 
     try {
+      // A cor a ser salva é a do estado 'color'
       await addAccount({ name, color });
       onFormSubmit();
     } catch (err) {
@@ -37,32 +38,43 @@ export default function AddAccountForm({ onFormSubmit }: AddAccountFormProps) {
   };
 
   return (
-    // Usamos um grid de 1 coluna para este formulário mais simples
-    <form onSubmit={handleSubmit} className="form-layout" style={{ gridTemplateColumns: '1fr' }}>
-      <FormField label="Nome da Conta" htmlFor="accountName">
-        <input
-          id="accountName"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Ex: Carteira, Nubank"
-          required
+    <form
+      onSubmit={handleSubmit}
+      className="form-layout"
+      style={{ gridTemplateColumns: "1fr" }}
+    >
+      <div className="account-name-preview-wrapper">
+        <FormField label="Nome da Conta" htmlFor="accountName">
+          <input
+            id="accountName"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex: Carteira, Nubank"
+            required
+          />
+        </FormField>
+        {/* --- INÍCIO DA CORREÇÃO --- */}
+        {/* A prévia da cor usa o estado 'color' diretamente */}
+        <span
+          className="color-preview-dot"
+          style={{ backgroundColor: color }}
         />
-      </FormField>
+        {/* --- FIM DA CORREÇÃO --- */}
+      </div>
 
-      {/* --- INÍCIO DA MUDANÇA --- */}
       <FormField label="Cor de Identificação" htmlFor="accountColor">
-        <ColorPalettePicker
-          selectedColor={color}
-          onColorChange={setColor}
-        />
+        <ColorPalettePicker selectedColor={color} onColorChange={setColor} />
       </FormField>
-      {/* --- FIM DA MUDANÇA --- */}
 
       {error && <p className="form-error full-width">{error}</p>}
 
       <div className="form-actions full-width">
-        <button type="button" onClick={onFormSubmit} className="secondary-button">
+        <button
+          type="button"
+          onClick={onFormSubmit}
+          className="secondary-button"
+        >
           Cancelar
         </button>
         <button type="submit" className="primary-button" disabled={loading}>

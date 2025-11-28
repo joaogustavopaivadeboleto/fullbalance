@@ -1,41 +1,23 @@
 // src/app/(main)/layout.tsx
+
 "use client";
 
-import React, { useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
-import FullscreenLoader from "@/components/ui/FullscreenLoader";
-import MobileHeader from "@/components/layout/MobileHeader";
+import Header from "@/components/layout/Header";
+import { useSidebar } from "@/context/SidebarContext";
+
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
+  const { isMinimized } = useSidebar();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    }
-  }, [user, loading, router]);
-
-  if (loading || !user) {
-    return (
-      <div className="fullscreen-loader">
-        <p>Carregando FullBalance...</p>
-      </div>
-    );
-  }
-  if (loading) {
-    return <FullscreenLoader />;
-  }
   return (
-    <div className="main-layout">
+    <div className={`main-layout ${isMinimized ? "sidebar-minimized" : ""}`}>
       <Sidebar />
       <div className="content-wrapper">
-        <MobileHeader />
+        <Header />
         <main className="main-content">{children}</main>
       </div>
     </div>
